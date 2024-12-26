@@ -153,20 +153,23 @@ void right(int speed) {
 
 
 
+
+
+// NEW
 void sidewayRight(int speed) {
-  // Front-left
-    digitalWrite(motor1pin1, LOW);  // FL forward
-    digitalWrite(motor1pin2, HIGH);
+  // Front-left 
+    digitalWrite(motor1pin1, HIGH);  // FL forward
+    digitalWrite(motor1pin2, LOW);
 
   // Rear left
-    digitalWrite(motor3pin1, HIGH);
-    digitalWrite(motor3pin2, LOW);
+    digitalWrite(motor3pin1, LOW);
+    digitalWrite(motor3pin2, HIGH);
 
   // Front-right
     digitalWrite(motor2pin1, LOW); // FR forward
     digitalWrite(motor2pin2, HIGH);
 
-  // Rear-left
+  // Rear-right
     digitalWrite(motor4pin1, LOW); // FR forward
     digitalWrite(motor4pin2, HIGH);
 
@@ -176,17 +179,102 @@ void sidewayRight(int speed) {
     analogWrite(ENB2, speed);
 }
 
+
+
+
+//NEW SIDEWAYLEFT
+
 void sidewayLeft(int speed) {
-   // Front
-    digitalWrite(motor1pin1, HIGH);  // FL forward
-    digitalWrite(motor1pin2, LOW);
+   // Front left
+    digitalWrite(motor1pin1, LOW);  // FL forward
+    digitalWrite(motor1pin2, HIGH);
 
   // Rear left
-    digitalWrite(motor3pin1, LOW);
-    digitalWrite(motor3pin2, HIGH);
+    digitalWrite(motor3pin1, HIGH);
+    digitalWrite(motor3pin2, LOW);
 
   // Front-right
     digitalWrite(motor2pin1, HIGH); // FR forward
+    digitalWrite(motor2pin2, LOW);
+
+  // Rear-right
+    digitalWrite(motor4pin1, HIGH); // FR forward
+    digitalWrite(motor4pin2, LOW);
+
+    analogWrite(ENA, speed);
+    analogWrite(ENB, speed);
+    analogWrite(ENA2, speed);
+    analogWrite(ENB2, speed);
+
+}
+
+
+
+
+void diagonalUpLeft(int speed) {
+   // Front-left
+    digitalWrite(motor1pin1, HIGH);  // FL forward
+    digitalWrite(motor1pin2, LOW);
+
+  // Rear right
+    digitalWrite(motor3pin1, LOW);
+    digitalWrite(motor3pin2, LOW);
+
+  // Front-right
+    digitalWrite(motor2pin1, LOW); // FR forward
+    digitalWrite(motor2pin2, LOW);
+
+  // Rear-left
+    digitalWrite(motor4pin1, LOW); // FR forward
+    digitalWrite(motor4pin2, HIGH);
+
+    analogWrite(ENA, speed);
+    analogWrite(ENB, speed);
+    analogWrite(ENA2, speed);
+    analogWrite(ENB2, speed);
+}
+
+
+void diagonalUpRight(int speed) {
+   // Front-left
+    digitalWrite(motor1pin1, LOW);  // FL forward
+    digitalWrite(motor1pin2, LOW);
+
+    // Front-right
+    digitalWrite(motor2pin1, HIGH); // FR forward
+    digitalWrite(motor2pin2, LOW);
+
+  // Rear right
+    digitalWrite(motor3pin1, HIGH);
+    digitalWrite(motor3pin2, LOW);
+
+
+
+  // Rear-left
+    digitalWrite(motor4pin1, LOW); // FR forward
+    digitalWrite(motor4pin2, LOW);
+
+    analogWrite(ENA, speed);
+    analogWrite(ENB, speed);
+    analogWrite(ENA2, speed);
+    analogWrite(ENB2, speed);
+}
+
+
+
+
+
+void diagonalDownLeft(int speed) {
+   // Front-left
+    digitalWrite(motor1pin1, LOW);  // FL forward
+    digitalWrite(motor1pin2, HIGH);
+
+  // Rear right
+    digitalWrite(motor3pin1, LOW);
+    digitalWrite(motor3pin2, LOW);
+
+  // Front-right
+    digitalWrite(motor2pin1, LOW); // FR forward
     digitalWrite(motor2pin2, LOW);
 
   // Rear-left
@@ -198,6 +286,34 @@ void sidewayLeft(int speed) {
     analogWrite(ENA2, speed);
     analogWrite(ENB2, speed);
 }
+
+
+void diagonalDownRight(int speed) {
+   // Front-left
+    digitalWrite(motor1pin1, LOW);  // FL forward
+    digitalWrite(motor1pin2, LOW);
+
+    // Front-right
+    digitalWrite(motor2pin1, LOW); // FR forward
+    digitalWrite(motor2pin2, HIGH);
+
+  // Rear right
+    digitalWrite(motor3pin1, LOW);
+    digitalWrite(motor3pin2, HIGH);
+
+
+
+  // Rear-left
+    digitalWrite(motor4pin1, LOW); // FR forward
+    digitalWrite(motor4pin2, LOW);
+
+    analogWrite(ENA, speed);
+    analogWrite(ENB, speed);
+    analogWrite(ENA2, speed);
+    analogWrite(ENB2, speed);
+}
+
+
 void stop() {
     digitalWrite(motor1pin1, LOW);
     digitalWrite(motor1pin2, LOW);
@@ -241,14 +357,35 @@ void loop() {
             sidewayRight(speed);
         } else if (ps2x.Button(PSB_PINK)) {
             sidewayLeft(speed);
+        } else if (ps2x.Button(PSB_GREEN)) {
+            diagonalUpLeft(speed);
+        } else if (ps2x.Button(PSB_BLUE)) {
+            diagonalUpRight(speed);
         } else {
-            stop();
+          joystickEnabled = false;
+          Serial.println("Disabled");
+          digitalWrite(ledPin, LOW);
+          stop();
         }
-    } else {
-        joystickEnabled = false;
-        Serial.println("Disabled");
-        digitalWrite(ledPin, LOW);
-        stop();
+    }
+
+     // Joystick mode toggle with R2
+    if (ps2x.Button(PSB_L1)) {
+        joystickEnabled = true;
+        digitalWrite(ledPin, HIGH);
+        Serial.println("Enabled");
+
+   
+        if (ps2x.Button(PSB_GREEN)) {
+            diagonalDownLeft(speed);
+        } else if (ps2x.Button(PSB_BLUE)) {
+            diagonalDownRight(speed);
+        } else {
+          joystickEnabled = false;
+          Serial.println("Disabled");
+          digitalWrite(ledPin, LOW);
+          stop();
+        }
     }
 
     delay(50);
